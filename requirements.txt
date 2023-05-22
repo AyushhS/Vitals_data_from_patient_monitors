@@ -1,0 +1,8 @@
+numpy==1.21.6
+paddlepaddle -i https://pypi.tuna.tsinghua.edu.cn/simple
+paddleocr --upgrade
+paddlepaddle
+colorthief
+neurokit2
+deskew
+tensorflow
