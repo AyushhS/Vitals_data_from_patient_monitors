@@ -1,6 +1,6 @@
 numpy==1.21.6
-paddlepaddle -i https://pypi.tuna.tsinghua.edu.cn/simple
-paddleocr --upgrade
+# paddlepaddle -i https://pypi.tuna.tsinghua.edu.cn/simple
+paddleocr
 paddlepaddle
 colorthief
 neurokit2

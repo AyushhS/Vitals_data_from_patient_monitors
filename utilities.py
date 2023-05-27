@@ -1,3 +1,26 @@
+from imageProcessing import segmentation
+
+def processInput():
+    s = input()
+    s2 = s.split()
+    cond = False
+    i = 0
+    while(i < len(s2)):
+        if (cond and i >= 1):
+            cond = ~cond
+            s2[i - 1] = s2[i - 1] + ' ' + s2[i]
+            i = i - 1
+            s2.remove(s2[i + 1]) 
+        for j in range(0, len(s2[i])):
+            if (s2[i][j] == '\'' or s2[i][j] == '\"'):
+                cond = ~cond
+                continue
+        i += 1
+    for j in range(0, len(s2)):
+        s2[j] = s2[j].replace('\'', '')
+        s2[j] = s2[j].replace('\"', '')
+    return s2
+
 def welcomeMessage():
     print('VITAL DATA FROM PATIENT MONITORS PROJECT')
     print('A project used to find vital information from images/videos of patient', 
@@ -15,8 +38,8 @@ def helpFunction():
     print('additional arguments after path - \n')
     print('-cp = if the file is an image. The output would also',
     'have a cropped patient monitor along with output of the vital signs in',
-    'the CLI. example - \n')
-    print('\t<image_path> -cp\n')
+    'the CLI. example (This example is to be used for all the arguments) - \n')
+    print('\t<image_path> -cp <output_path>\n')
     print('-v = if the file is a video. The output would be a csv',
     'file containing the vitals of the image in csv file')
     print('-cv = if the file is a video. The output would be', 
@@ -28,14 +51,14 @@ def argumentErrorPrompt():
     print('For help, type --help.')
     print('To exit the program, type --quit or press Ctrl + C.')
 
-def imageProcess(path):
+def imageProcess(inputpath, outputpath):
     print('i')
 
-def croppedImageProcess(path):
-    print('ci')
+def croppedImageProcess(inputpath, outputpath):
+    segmentation(inputpath, outputpath)
 
-def videoProcess(path):
+def videoProcess(inputpath, outputpath):
     print('v')
 
-def croppedvideoProcess(path):
+def croppedvideoProcess(inputpath, outputpath):
     print('cv')
