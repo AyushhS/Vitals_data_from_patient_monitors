@@ -1,15 +1,4 @@
-import cv2
-import numpy as np
-from deskew import determine_skew
-import math
-import tensorflow as tf
-
-segmentationModel = tf.keras.models.load_model('/media/cornflaek/P' + 
-'ersonal Stuff/my stuff/my schools stuff/college stuff/Inter IIT ' + 
-'tech 2022 shit/final/efficientnetB4_2.h5')
-segmentationModel.predict(np.zeros((1,380,380,3))) # To run it once so that weights get loaded into memory
-print('\ndone\n')
-
+from libraries import *
 
 def deskewImage(image):
     imageGrayscale = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
@@ -44,11 +33,6 @@ def pad(img):
     img_resized = cv2.resize(new_img, original_size, interpolation=cv2.INTER_CUBIC)
     return img_resized
 
-def processImage(imagePath):
-    image = cv2.imread(imagePath)
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    return image
-
 def giveCoordinates(image):
     image = cv2.resize(image, (380, 380))
     expandedImage = np.expand_dims(image, axis=0)
@@ -76,14 +60,9 @@ def croppingSegmentatedImages(coordinates, image):
     return croppedImage
 
 
-def saveImage(path, image):
-    cv2.imwrite(path, image)
-
-
-def segmentation(imagepath, savepath):
-    image = processImage(imagepath)
+def segmentation(image):
     image = deskewImage(image)
     image = pad(image)
     coordinates = giveCoordinates(image)
     croppedImage = croppingSegmentatedImages(coordinates, image)
-    saveImage(savepath, croppedImage)
+    return croppedImage

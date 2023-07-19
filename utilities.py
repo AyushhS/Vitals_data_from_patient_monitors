@@ -1,4 +1,6 @@
 from imageProcessing import segmentation
+from monitorProcessing import main_func1
+from libraries import *
 
 def processInput():
     s = input()
@@ -39,26 +41,96 @@ def helpFunction():
     print('-cp = if the file is an image. The output would also',
     'have a cropped patient monitor along with output of the vital signs in',
     'the CLI. example (This example is to be used for all the arguments) - \n')
-    print('\t<image_path> -cp <output_path>\n')
-    print('-v = if the file is a video. The output would be a csv',
+    print('\t<image_path/folder_path> -cp\n')
+    print('-cph = if the file is an image. The output would also',
+    'have a cropped patient monitor, a heart rate monitor in a plot', 
+    'along with output of the vital signs in',
+    'the CLI.')
+    print('-f = if a folder containing the image is given. The output would be a csv',
     'file containing the vitals of the image in csv file')
-    print('-cv = if the file is a video. The output would be', 
-    'video with cropped patient monitors in it, along with a csv file.')
+    print('-cf = if a folder containing the image is given. The output would be a csv',
+    'file containing the vitals of the image in csv file, and a folder containing all ', 
+    'the cropped images.')
 
 def argumentErrorPrompt():
     print('Error: Incorrect arguments supplied. Please retry with the correct', 
-    'arguments.')
+    'arguments. make sure that all the paths are enclosed with \"\" or \'\'.')
     print('For help, type --help.')
     print('To exit the program, type --quit or press Ctrl + C.')
 
-def imageProcess(inputpath, outputpath):
-    print('i')
+# def segmentation(imagepath):
+#     image = processImage(imagepath)
+#     image = deskewImage(image)
+#     image = pad(image)
+#     coordinates = giveCoordinates(image)
+#     croppedImage = croppingSegmentatedImages(coordinates, image)
+#     return croppedImage
+
+# def inference(image_path:str) -> dict:
+#     croppedImage = segmentation(image_path)
+#     result = main_func1(croppedImage)
+#     return result
+
+def processImage(imagePath):
+    image = cv2.imread(imagePath)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    return image
+
+def imageProcess(inputpath):
+    image = processImage(inputpath)
+    croppedImage = segmentation(image)
+
+    result = main_func1(croppedImage, False)
+    print(result)
 
 def croppedImageProcess(inputpath, outputpath):
-    segmentation(inputpath, outputpath)
+    image = processImage(inputpath)
+    croppedImage = segmentation(image)
+    cv2.imwrite(outputpath, croppedImage)
 
-def videoProcess(inputpath, outputpath):
-    print('v')
+    result = main_func1(croppedImage, False)
+    print(result)
 
-def croppedvideoProcess(inputpath, outputpath):
-    print('cv')
+def croppedImageProcessWithGraph(inputpath, outputpath):
+    image = processImage(inputpath)
+    croppedImage = segmentation(image)
+    cv2.imwrite(outputpath, croppedImage)
+
+    result = main_func1(croppedImage, True)
+    print(result)
+
+def folderProcess(inputfolder):
+    files = os.listdir(inputfolder)
+    results = []
+    
+    for file in files:
+        image = processImage(inputfolder + '/' + file)
+        croppedImage = segmentation(image)
+
+        result = main_func1(croppedImage, False)
+        result['picture'] = file
+        results.append(result)
+
+    df = pd.DataFrame(results)
+    df = df.set_index('picture')
+    df.to_csv('vitals.csv')
+
+def croppedImageFolderProcess(inputfolder, outputfolder):
+    files = os.listdir(inputfolder)
+    results = []
+
+    if not os.path.isdir(outputfolder):
+        os.mkdir(outputfolder)
+    
+    for file in files:
+        image = processImage(inputfolder + '/' + file)
+        croppedImage = segmentation(image)
+        cv2.imwrite(outputfolder + '/' + file.split('.')[0] + '-cropped.' + file.split('.')[1], croppedImage)
+
+        result = main_func1(croppedImage, False)
+        result['picture'] = file
+        results.append(result)
+
+    df = pd.DataFrame(results)
+    df = df.set_index('picture')
+    df.to_csv('vitals.csv')
