@@ -9,7 +9,8 @@ This project is made as a solution of the inter-IIT 2023 Problem Statement 6 - T
  ```bash
 pip install -r requirements.txt
 ```
-2.  run the main.py file - 
+2. Download the model file from the following link - https://drive.google.com/file/d/1Vw618vN8OgqO-_aY-UMChEwN1Z9lUBvg/view?usp=sharing
+3.  run the main.py file - 
 ```bash
 python main.py
 ```
